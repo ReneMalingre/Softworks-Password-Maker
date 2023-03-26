@@ -1,0 +1,153 @@
+:root {
+  --body-background-color: #f9fbfd;
+  --button-color: hsl(360deg 91% 36%);
+  --button-color-hover: hsl(360deg 91% 36%);
+  --button-color-active: hsl(360deg 91% 36%);
+  --button-color-disabled: hsl(360deg 91% 36%);
+  --button-color-text: hsl(0deg 0% 100%);
+  --button-box-shadow: rgba(0 0 0 / 10%) 0px 1px 6px 0px rgba(0 0 0 / 20%) 0px
+    1px 1px 0px;
+  --card-background-color: hsl(0deg 0% 100%);
+  --card-border-color: hsl(0deg 0% 100%);
+  --card-border-radius: 5px;
+  --card-box-shadow: rgba(0 0 0 15%) 0px 2px 8px 0px;
+  --card-color: hsl(206deg 17% 28%);
+  --card-header-after-background-color: #e7e9eb;
+  --card-header-after-height: 2px;
+  --password-border-color: #c0c7cf;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+.wrapper {
+  font-size: 16px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: var(--body-background-color);
+}
+
+.wrapper {
+  padding-top: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  padding-top: 0;
+  color: var(--card-color);
+}
+
+.card {
+  background-color: var(--card-background-color);
+  border-radius: var(--card-border-radius);
+  border-width: 1px;
+  box-shadow: var(--card-box-shadow);
+  color: var(--card-color);
+  font-size: 18px;
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 30px 40px;
+}
+
+.card-header::after {
+  content: " ";
+  display: block;
+  width: 100%;
+  background: var(--card-header-after-background-color);
+  height: var(--card-header-after-height);
+}
+
+.card-body {
+  min-height: 100px;
+}
+
+.card-footer {
+  text-align: center;
+}
+
+.card-footer::before {
+  content: " ";
+  display: block;
+  width: 100%;
+  background: var(--card-header-after-background-color);
+  height: var(--card-header-after-height);
+}
+
+.card-footer::after {
+  content: " ";
+  display: block;
+  clear: both;
+}
+
+.btn {
+  border: none;
+  background-color: var(--button-color);
+  border-radius: 25px;
+  box-shadow: var(--button-box-shadow);
+  color: var(--button-color-text);
+  display: inline-block;
+  font-size: 22px;
+  line-height: 22px;
+  margin: 16px 16px 16px 20px;
+  padding: 14px 34px;
+  text-align: center;
+  cursor: pointer;
+}
+
+button[disabled] {
+  cursor: default;
+  background: var(--button-color-disabled);
+}
+
+.float-right {
+  float: right;
+}
+
+#password {
+  /* remove old redundant vendor flags
+   -webkit-appearance: none;
+  -moz-appearance: none; */
+  appearance: none;
+  display: block;
+  width: 100%;
+  padding: 15px 15px 85px;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 2px dashed var(--password-border-color  );
+  border-radius: 6px;
+  resize: none;
+  overflow: hidden;
+}
+
+@media (max-width: 690px) {
+  .btn {
+    font-size: 1rem;
+    margin: 16px 0 0;
+    padding: 10px 15px;
+  }
+
+  #password {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .btn {
+    font-size: 0.8rem;
+  }
+}

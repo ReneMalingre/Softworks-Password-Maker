@@ -10,20 +10,45 @@ var generateBtn = document.querySelector('#generate');
 // Add event listener to generate button
 generateBtn.addEventListener('click', writePassword);
 
-// store the password characters in string constants
+// select the copy button
+var copyPasswordBtn = document.querySelector('#copy-button');
+// Add event listener to copy button
+copyPasswordBtn.addEventListener('click', copyPassword);
+
+// hide the copy button on form load
+copyPasswordBtn.style.display = 'none';
+
+ // the possible password characters are stored in string constants, in 4 different categories
+ // it pains me to declare these as global variables, but I need the special characters here
+ // TODO: find a way to not have these as global variables
+ const passwordNumbers = '0123456789';
+ const passwordLowercase = 'abcdefghijklmnopqrstuvwxyz';
+ const passwordUppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+ const passwordSpecialCharacters = ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+
+// add the special characters to the instructions here so they are not hard-coded in html
+// otherwise the special characters would need to be escaped in the html
+// and the special characters would not be displayed correctly
+// Gives an opportunity to add more special characters in the future
+// TODO: make this a function that runs on page load
+const specialCharactersLI = document.querySelector('#special-characters');
+const specialCharactersText =specialCharactersLI.textContent + ': <' + passwordSpecialCharacters + '>';
+specialCharactersLI.textContent = specialCharactersText;
 
 // Write password to the #password input
 function writePassword() {
+  // clear the UI
+  const passwordText = document.querySelector('#password');
+  const feedbackText = document.getElementById('#feedback');
+  generateBtn.disabled=true;
+  passwordText.value = '';
+  feedbackText.innerHTML = '';
+  copyPasswordBtn.style.display = 'none';
+
   // set the min, max and default password lengths
   const passwordDefaultLength = 12;
   const passwordMinLength = 8;
   const passwordMaxLength = 128;
-
-  // the possible password characters are stored in string constants, in 4 different categories
-  const passwordSpecialCharacters = ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
-  const passwordNumbers = '0123456789';
-  const passwordLowercase = 'abcdefghijklmnopqrstuvwxyz';
-  const passwordUppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   // create class instances to hold the valid password characters
   // and whether the character type is selected by the user
@@ -38,14 +63,21 @@ function writePassword() {
   // create a new GeneratePasswordResult object to hold the password length, final password and error condition as set by the generatePassword function
   const passwordResult =new GeneratePasswordResult(passwordDefaultLength, passwordMinLength, passwordMaxLength, characterOptions);
   generatePassword(passwordResult);
-  const passwordText = document.querySelector('#password');
-  if (passwordResult.errorCondition.length > 0) {
-    passwordText.value = passwordResult.errorCondition;
-  } else {
-    passwordText.value = passwordResult.password;
-  };
-}
 
+  // if the passwordResult object has an error condition, display the error condition to the user
+  // otherwise display the generated password to the user
+  if (!passwordResult.errorCondition.length > 0) {
+    passwordText.value = passwordResult.password;
+    // show the copy button
+    copyPasswordBtn.style.display = 'block';
+  };
+
+  // display the user feedback: error or selections
+  feedbackText.innerHTML= passwordResult.userFeedback();
+
+  // enable the generate button again
+  generateBtn.disabled=false;
+}
 
 // This is function to generate a password
 // it needs a valid password length, and at least one character type chosen from 4 options
@@ -67,8 +99,8 @@ function generatePassword(generateResult) {
   // and check if the user selected at least one character type
   let userSelectedAtLeastOneCharacterType = false;
   for (const characterType of generateResult.passwordCharacterOptions) {
-    console.log('pre checkUserSelection:');
-    console.log(characterType);
+    // console.log('pre checkUserSelection:');
+    // console.log(characterType);
     // check that there is enough data to run the methods
     if (!characterType.checkData()) {
       generateResult.errorCondition = 'There is not enough data to run the program, this is a bug. Please contact the Rene Malingre';
@@ -80,8 +112,8 @@ function generatePassword(generateResult) {
     if (characterType.isSelected) {
       userSelectedAtLeastOneCharacterType = true;
     };
-    console.log('post checkUserSelection:');
-    console.log(characterType);
+    // console.log('post checkUserSelection:');
+    // console.log(characterType);
   };
 
   // if the user has not selected at least one character type, return an error
@@ -92,6 +124,7 @@ function generatePassword(generateResult) {
 
   // now we can generate the password!
   // create an array to hold the password characters from the selected character types
+  // TODO - move this into the GeneratePasswordResult class as a method
   let passwordCharacters = [];
   // iterate through the selected character options
   for (const characterType of generateResult.passwordCharacterOptions) {
@@ -143,7 +176,7 @@ class CharacterTypes {
   }
   // generate the confirm prompt string based on the properties of this class
   constructConfirmPrompt() {
-    return 'Do you want to include ' + this.characterType + ' (' + this.specialCharacters.join('') + ' ) in your password?';
+    return 'Do you want to include ' + this.characterType + ' in your password?';
   }
   // ask the user if they want to include this character type in their password
   askUser() {
@@ -227,7 +260,6 @@ class GeneratePasswordResult {
       // get a random character from the passwordCharacters array
       // and add the character at the random index to the password
       this.password += this.getRandomCharacter(passwordCharacters);
-      console.log(this.password);
     };
     return;
   }
@@ -239,6 +271,55 @@ class GeneratePasswordResult {
     const randomIndex = Math.floor(Math.random() * validCharacters.length);
     // return the character at the random index
     return validCharacters[randomIndex];
+  };
+  // return a string letting the user know length of password and
+  // what character types were used in their password
+  userFeedback() {
+    if (this.errorCondition.length>0) {
+      return '<p class=' + '"error-message"' + '>' + this.errorCondition + '</p>';
+    } else {
+      let feedback ='';
+      if (this.specialCharactersUsed.length>0) {
+        // return an unordered list of the character types used in the password
+        feedback = '<p>You selected the following character types:</p>';
+        feedback += '<ul>';
+        for (const charType of this.specialCharactersUsed) {
+          feedback += '<li>' + charType + '</li>';
+        }
+        feedback += '</ul>';
+      } else {
+        feedback = '<p>There were no character types selected.' + '</p>';
+      };
+      feedback += '<p>You selected a password length of ' + this.passwordLength + ' characters.</p>';
+      return feedback;
+    };
+  };
+};
+
+function copyPassword() {
+  // select the password text and copy it to the clipboard
+  const passwordElement = document.querySelector('#password');
+  const passwordText = passwordElement.value;
+  if (passwordText.length>0) {
+    if (copyToClipboard(passwordText)) {
+      // alert the user that the password has been copied to the clipboard
+      alert('Your password has been copied to the clipboard');
+    } else {
+      // alert the user that the password has not been copied to the clipboard
+      alert('Your password could not copied to the clipboard');
+      return;
+    };
+  };
+};
+
+async function copyToClipboard(myString) {
+  try {
+    await navigator.clipboard.writeText(myString);
+    console.log('Text copied to clipboard');
+    return true;
+  } catch (err) {
+    console.error('Failed to copy text: ', err);
+    return false;
   };
 };
 

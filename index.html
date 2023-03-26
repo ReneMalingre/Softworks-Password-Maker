@@ -16,28 +16,63 @@
     <link rel="stylesheet" href="./assets/css/normalize.css" />
     <link rel="stylesheet" href="./assets/css/style.css" />
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Password Generator</h1>
-      </header>
-      <div class="card">
+    <header>
+      <h1>Softworks Password Maker</h1>
+    </header>
+    <main class="wrapper">
+      <section class="card">
         <div class="card-header">
           <h2>Generate a Password</h2>
         </div>
+        <article class="instructions">
+          <h3>
+            Click the Generate Password button to generate a random password.
+          </h3>
+          <p>You must select a password length between 8 and 128 characters.</p>
+          <p>You must select at least one of the following character types:</p>
+          <ul>
+            <li id="special-characters">special characters</li>
+            <li>numbers</li>
+            <li>lowercase letters</li>
+            <li>uppercase letters</li>
+          </ul>
+          <p>
+            The password is generated randomly from the selected character
+            types.
+          </p>
+          <p>
+            The password is displayed to you, or if there is an error, an error
+            message is displayed to you.
+          </p>
+          <p>
+            You can copy the password to your clipboard by clicking the Copy
+            button.
+          </p>
+          <p>
+            You can generate a new password by clicking the Generate Password
+            button again.
+          </p>
+        </article>
         <div class="card-body">
           <textarea
             readonly
             id="password"
             placeholder="Your Secure Password"
             aria-label="Generated Password"
-          ></textarea>
+          >
+          </textarea>
+          <div class="post-generate">
+            <button id="copy-button" class="btn-copy">Copy Password</button>
+            <div class="feedback" id="#feedback"></div>
+          </div>
         </div>
         <div class="card-footer">
           <button id="generate" class="btn">Generate Password</button>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
     <script src="./assets/js/script.js"></script>
   </body>
 </html>

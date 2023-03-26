@@ -1,9 +1,10 @@
 :root {
+  /* TODO: remove unnecessary variables */
   --body-background-color: #f9fbfd;
-  --button-color: hsl(360deg 91% 36%);
-  --button-color-hover: hsl(360deg 91% 36%);
+  --button-color: #423867;
+  --button-color-hover: #6a59a6;
   --button-color-active: hsl(360deg 91% 36%);
-  --button-color-disabled: hsl(360deg 91% 36%);
+  --button-color-disabled: hsl(0deg 34% 47%);
   --button-color-text: hsl(0deg 0% 100%);
   --button-box-shadow: rgba(0 0 0 / 10%) 0px 1px 6px 0px rgba(0 0 0 / 20%) 0px
     1px 1px 0px;
@@ -15,12 +16,30 @@
   --card-header-after-background-color: #e7e9eb;
   --card-header-after-height: 2px;
   --password-border-color: #c0c7cf;
+  --button-font-size: 1.2rem;
+  --button-padding-tb: 0.6rem;
+  --button-padding-rl: 1.2rem;
+  --margin-medium: 0.75rem;
+  --margin-large: 1.5rem;
+  --font-size-smallish: 0.9rem;
+  --font-size-small: 0.7rem;
+  --font-size-normal: 1rem;
+  --font-size-large: 1.4rem;
+  --error-text-color: #b6382f;
+  --color-main: #4a4e4d;
+  --color-secondary: #90afc5;
+  --color-accent-1: #6a4c93;
+  --color-accent-2: #65818a;
+  --color-accent-3: #eefbff;
+  --text-color: #333;
 }
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html,
@@ -30,6 +49,7 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
+  background-color: var(--color-main);
 }
 
 body {
@@ -38,20 +58,25 @@ body {
 }
 
 .wrapper {
-  padding-top: 30px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-top: var(--margin-medium);
+  padding-left: var(--margin-medium);
+  padding-right: var(--margin-medium);
 }
 
 header {
   text-align: center;
-  padding: 20px;
+  padding: var(--margin-medium) 0;
   padding-top: 0;
-  color: var(--card-color);
+  background-color: var(--color-main);
+}
+
+h1 {
+  color: var(--color-secondary);
+  margin: 0.67em 0 0;
 }
 
 .card {
-  background-color: var(--card-background-color);
+  background-color: var(--color-accent-3);
   border-radius: var(--card-border-radius);
   border-width: 1px;
   box-shadow: var(--card-box-shadow);
@@ -60,6 +85,42 @@ header {
   margin: 0 auto;
   max-width: 800px;
   padding: 30px 40px;
+}
+
+.card-header h2 {
+  font-size: var(--font-size-large);
+  font-weight: bold;
+  margin: 0.5em 0;
+  color: var(--color-accent-1);
+}
+
+.instructions h3 {
+  font-size: var(--font-size-normal);
+  font-weight: bold;
+  margin: 0.5em 0;
+  color: var(--color-accent-2);
+}
+
+.instructions p,
+.instructions li,
+.feedback p,
+.feedback li {
+  font-size: var(--font-size-smallish);
+  line-height: 1.4;
+  color: (var(--text-color));
+}
+
+.instructions li,
+.feedback li {
+  margin-left: 3em;
+  color: (var(--text-color));
+}
+
+.error-message {
+  color: var(--error-text-color) !important;
+  font-size: var(--font-size-normal) !important;
+  font-weight: bold;
+  font-style: italic;
 }
 
 .card-header::after {
@@ -71,7 +132,20 @@ header {
 }
 
 .card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-content: center;
   min-height: 100px;
+}
+
+/* this contains the copy password button and the feedback */
+.post-generate {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: flex-start;
 }
 
 .card-footer {
@@ -99,12 +173,31 @@ header {
   box-shadow: var(--button-box-shadow);
   color: var(--button-color-text);
   display: inline-block;
-  font-size: 22px;
-  line-height: 22px;
+  font-size: var(--button-font-size);
+  line-height: var(--button-font-size);
   margin: 16px 16px 16px 20px;
-  padding: 14px 34px;
+  padding: var(--button-padding-tb) var(--button-padding-rl);
   text-align: center;
   cursor: pointer;
+}
+
+.btn-copy {
+  align-self: flex-start;
+  border: none;
+  background-color: var(--button-color);
+  border-radius: 25px;
+  box-shadow: var(--button-box-shadow);
+  color: var(--button-color-text);
+  font-size: var(--button-font-size);
+  line-height: var(--button-font-size);
+  margin: var(--margin-medium);
+  padding: var(--button-padding-tb) var(--button-padding-rl);
+  cursor: pointer;
+}
+
+button:hover,
+button:focus {
+  background-color: var(--button-color-hover);
 }
 
 button[disabled] {
@@ -112,42 +205,72 @@ button[disabled] {
   background: var(--button-color-disabled);
 }
 
-.float-right {
-  float: right;
-}
-
 #password {
-  /* remove old redundant vendor flags
-   -webkit-appearance: none;
-  -moz-appearance: none; */
   appearance: none;
   display: block;
   width: 100%;
-  padding: 15px 15px 85px;
   font-size: 1.2rem;
+  padding: 1em 1em 3em;
   text-align: center;
   margin-top: 10px;
-  margin-bottom: 10px;
-  border: 2px dashed var(--password-border-color  );
+  border: 2px dashed var(--password-border-color);
   border-radius: 6px;
   resize: none;
   overflow: hidden;
 }
 
+#feedback {
+  grid-area: feedback;
+  text-align: left;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* TODO: make this responsive mobile-first */
 @media (max-width: 690px) {
-  .btn {
+  .card {
+    padding: 15px 10px;
+  }
+
+  .btn,
+  .btn-copy {
     font-size: 1rem;
     margin: 16px 0 0;
     padding: 10px 15px;
   }
 
   #password {
-    font-size: 1rem;
+    font-size: var(--font-size-normal);
+    margin: 0;
+    padding: 1em 1em 5em;
+  }
+
+  .instructions li,
+  .feedback li {
+    font-size: var(--font-size-smallish);
   }
 }
 
 @media (max-width: 500px) {
-  .btn {
+  .card {
+    padding: 5px;
+  }
+
+  .btn,
+  .btn-copy {
     font-size: 0.8rem;
+  }
+
+  #password {
+    font-size: var(--font-size-smallish);
+    margin: 0;
+    padding: 0.5em 0.5em 5em;
+  }
+
+  .instructions p,
+  .instructions li,
+  .feedback p,
+  .feedback li {
+    font-size: var(--font-size-small);
   }
 }

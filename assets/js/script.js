@@ -5,22 +5,41 @@
 // The password is generated randomly from the selected character types
 // and displayed to the user, or if there is an error, an error message is displayed to the user
 
+// Global bits
 // select the generate button
 var generateBtn = document.querySelector('#generate');
-// Add event listener to generate button
+// Add event listener to generate button to fire the application up
 generateBtn.addEventListener('click', writePassword);
 
 // select the copy button
 var copyPasswordBtn = document.querySelector('#copy-button');
-// Add event listener to copy button
+// Add event listener to copy button to run the copy to clipboard code
 copyPasswordBtn.addEventListener('click', copyPassword);
-
-// hide the copy button on form load
+// hide the copy button on form load, as it is only relevant when there is a password to copy
 copyPasswordBtn.style.display = 'none';
 
+// toggle visibility of the instructions: select the instructions toggle button and the instructions block
+// experimenting with different element selectors here to learn the syntax
+const toggleButton = document.querySelector('#toggle-button');
+const instructions = document.getElementById('instructions');
+// action the instructions toggle button click
+toggleButton.addEventListener('click', () => {
+  // the initial state of the element is set by inline style only, not by the CSS file
+  // so use getcomputedstyle instead, which factors in the css styling
+  // once the script sets it, getcomputedstyle is no longer necessary, so this method of checking style
+  // fixes the very first click
+  if (window.getComputedStyle(instructions).display == 'none') {
+    instructions.style.display = 'block';
+    toggleButton.textContent = 'Hide Instructions';
+  } else {
+    instructions.style.display = 'none';
+    toggleButton.textContent = 'Show Instructions';
+  }
+});
+
  // the possible password characters are stored in string constants, in 4 different categories
- // it pains me to declare these as global variables, but I need the special characters here
- // TODO: find a way to not have these as global variables
+ // it pains me philosophically to declare these as global variables, but I need the special characters here
+ // for addSpecialCharactersToInstructions()
  const passwordNumbers = '0123456789';
  const passwordLowercase = 'abcdefghijklmnopqrstuvwxyz';
  const passwordUppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -29,15 +48,12 @@ copyPasswordBtn.style.display = 'none';
 // add the special characters to the instructions here so they are not hard-coded in html
 // otherwise the special characters would need to be escaped in the html
 // and the special characters would not be displayed correctly
-// Gives an opportunity to add more special characters in the future
-// TODO: make this a function that runs on page load
-const specialCharactersLI = document.querySelector('#special-characters');
-const specialCharactersText =specialCharactersLI.textContent + ': <' + passwordSpecialCharacters + '>';
-specialCharactersLI.textContent = specialCharactersText;
+// Gives an opportunity to add more special characters in the future without having to update the instructions
+addSpecialCharactersToInstructions();
 
 // Write password to the #password input
 function writePassword() {
-  // clear the UI
+  // clear the UI. This doesn't actually update the screen until after the routine has finished.
   const passwordText = document.querySelector('#password');
   const feedbackText = document.getElementById('#feedback');
   generateBtn.disabled=true;
@@ -46,6 +62,7 @@ function writePassword() {
   copyPasswordBtn.style.display = 'none';
 
   // set the min, max and default password lengths
+  // define here in case these need to be changed in the future.
   const passwordDefaultLength = 12;
   const passwordMinLength = 8;
   const passwordMaxLength = 128;
@@ -57,11 +74,12 @@ function writePassword() {
   const lowercase = new CharacterTypes(passwordLowercase, 'lowercase letters', false);
   const uppercase = new CharacterTypes(passwordUppercase, 'uppercase letters', false);
 
-  // create an array to hold the character options to pass to the GeneratePasswordResult class, and for easy iteration through the character types
+  // create an array to hold the character options to pass to the PasswordGenerator class, and for easy iteration through the character types
+  // keeping this flexible as an array so that other character types (I don't know, maybe emoji?) get added in the future
   const characterOptions = [specialCharacters, numbers, lowercase, uppercase];
 
-  // create a new GeneratePasswordResult object to hold the password length, final password and error condition as set by the generatePassword function
-  const passwordResult =new GeneratePasswordResult(passwordDefaultLength, passwordMinLength, passwordMaxLength, characterOptions);
+  // create a new PasswordGenerator class to hold the password length, final password and error condition as set by the generatePassword function
+  const passwordResult =new PasswordGenerator(passwordDefaultLength, passwordMinLength, passwordMaxLength, characterOptions);
   generatePassword(passwordResult);
 
   // if the passwordResult object has an error condition, display the error condition to the user
@@ -124,7 +142,7 @@ function generatePassword(generateResult) {
 
   // now we can generate the password!
   // create an array to hold the password characters from the selected character types
-  // TODO - move this into the GeneratePasswordResult class as a method
+  // TODO - move this into the PasswordGenerator class as a method
   let passwordCharacters = [];
   // iterate through the selected character options
   for (const characterType of generateResult.passwordCharacterOptions) {
@@ -196,7 +214,7 @@ class CharacterTypes {
 };
 
 // define a class to generate a password
-class GeneratePasswordResult {
+class PasswordGenerator {
   constructor(pwdDefaultLength, pwdMinLength, pwdMaxLength, passwordCharacterOptions) {
     this.passwordDefaultLength = pwdDefaultLength;
     this.passwordMinLength = pwdMinLength;
@@ -281,16 +299,19 @@ class GeneratePasswordResult {
       let feedback ='';
       if (this.specialCharactersUsed.length>0) {
         // return an unordered list of the character types used in the password
-        feedback = '<p>You selected the following character types:</p>';
+        feedback = '<p id="selection-header">This password was created from your selections:</p>';
         feedback += '<ul>';
         for (const charType of this.specialCharactersUsed) {
-          feedback += '<li>' + charType + '</li>';
+          feedback += '<li>include ' + charType + '</li>';
         }
+        feedback += '<li>a password length of ' + this.passwordLength + ' characters.</li>';
         feedback += '</ul>';
       } else {
-        feedback = '<p>There were no character types selected.' + '</p>';
+        // this should never happen with the current code, but is included for completeness
+        // in case the class is reused in a different context
+        feedback = '<p id="selection-header">You did not make valid selections.</p>';
+        feedback += '<p>You selected a password length of ' + this.passwordLength + ' characters.</p>';
       };
-      feedback += '<p>You selected a password length of ' + this.passwordLength + ' characters.</p>';
       return feedback;
     };
   };
@@ -324,3 +345,14 @@ async function copyToClipboard(myString) {
 };
 
 
+
+
+// add the special characters to the instructions for clarity around what they actually are
+function addSpecialCharactersToInstructions() {
+  // relies on the global variable passwordSpecialCharacters being available
+  // hard-coded to the particular element id #special-characters
+  const specialCharactersLI = document.querySelector('#special-characters');
+  const specialCharactersText = specialCharactersLI.textContent + ': <' + passwordSpecialCharacters + '>';
+  specialCharactersLI.textContent = specialCharactersText;
+  return;
+}

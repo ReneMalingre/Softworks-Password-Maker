@@ -1,15 +1,13 @@
 :root {
   /* TODO: remove unnecessary variables */
-  --body-background-color: #f9fbfd;
+  /* --body-background-color: #f9fbfd; */
   --button-color: #423867;
   --button-color-hover: #6a59a6;
-  --button-color-active: hsl(360deg 91% 36%);
+  /* --button-color-active: hsl(360deg 91% 36%); */
   --button-color-disabled: hsl(0deg 34% 47%);
   --button-color-text: hsl(0deg 0% 100%);
   --button-box-shadow: rgba(0 0 0 / 10%) 0px 1px 6px 0px rgba(0 0 0 / 20%) 0px
     1px 1px 0px;
-  --card-background-color: hsl(0deg 0% 100%);
-  --card-border-color: hsl(0deg 0% 100%);
   --card-border-radius: 5px;
   --card-box-shadow: rgba(0 0 0 15%) 0px 2px 8px 0px;
   --card-color: hsl(206deg 17% 28%);
@@ -19,6 +17,10 @@
   --button-font-size: 1.2rem;
   --button-padding-tb: 0.6rem;
   --button-padding-rl: 1.2rem;
+  --toggle-button-font-size: 1rem;
+  --toggle-button-padding-tb: 0.4rem;
+  --toggle-button-padding-rl: 0.8rem;
+  --button-corner-radius: 25px;
   --margin-medium: 0.75rem;
   --margin-large: 1.5rem;
   --font-size-smallish: 0.9rem;
@@ -32,6 +34,7 @@
   --color-accent-2: #65818a;
   --color-accent-3: #eefbff;
   --text-color: #333;
+  --password-font-family: "Roboto Mono", monospace, courier;
 }
 
 *,
@@ -45,8 +48,8 @@
 html,
 body,
 .wrapper {
+  font-family: Roboto, "Open Sans", Montserrat, sans-serif;
   font-size: 16px;
-  height: 100%;
   margin: 0;
   padding: 0;
   background-color: var(--color-main);
@@ -94,6 +97,13 @@ h1 {
   color: var(--color-accent-1);
 }
 
+
+#instructions {
+  display: none;
+  transition: all 0.5s ease-in-out;
+}
+
+
 .instructions h3 {
   font-size: var(--font-size-normal);
   font-weight: bold;
@@ -119,7 +129,7 @@ h1 {
 .error-message {
   color: var(--error-text-color) !important;
   font-size: var(--font-size-normal) !important;
-  font-weight: bold;
+  font-weight: 600;
   font-style: italic;
 }
 
@@ -166,10 +176,10 @@ h1 {
   clear: both;
 }
 
-.btn {
+.btn, .btn-toggle {
   border: none;
   background-color: var(--button-color);
-  border-radius: 25px;
+  border-radius: var(--button-corner-radius);
   box-shadow: var(--button-box-shadow);
   color: var(--button-color-text);
   display: inline-block;
@@ -181,11 +191,21 @@ h1 {
   cursor: pointer;
 }
 
+.btn-toggle{
+  font-size: var(--toggle-button-font-size);
+  padding: var(--toggle-button-padding-tb) var(--toggle-button-padding-rl);
+  transition: all 0.3s ease-in-out;
+  margin:0;
+  margin-top: var(--toggle-button-padding-tb );
+  font-style: italic;
+  font-weight: 300;
+}
+
 .btn-copy {
   align-self: flex-start;
   border: none;
   background-color: var(--button-color);
-  border-radius: 25px;
+  border-radius: var(--button-corner-radius);
   box-shadow: var(--button-box-shadow);
   color: var(--button-color-text);
   font-size: var(--button-font-size);
@@ -198,6 +218,7 @@ h1 {
 button:hover,
 button:focus {
   background-color: var(--button-color-hover);
+  outline: 2px solid var(--color-accent-2);
 }
 
 button[disabled] {
@@ -209,21 +230,43 @@ button[disabled] {
   appearance: none;
   display: block;
   width: 100%;
+  font-family: var(--password-font-family);
   font-size: 1.2rem;
   padding: 1em 1em 3em;
   text-align: center;
   margin-top: 10px;
+  margin-bottom: 10px;
   border: 2px dashed var(--password-border-color);
   border-radius: 6px;
   resize: none;
   overflow: hidden;
 }
 
+#password:focus {
+  border: 2px solid var(--password-border-color);
+}
+
+#password::selection {
+  background: var(--button-color);
+  color: var(--color-accent-3);
+}
+
 #feedback {
-  grid-area: feedback;
   text-align: left;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+#selection-header {
+  font-weight: 500;
+}
+
+footer {
+  text-align: center;
+  padding: var(--margin-medium) 0;
+  padding-bottom: 0;
+  background-color: var(--color-main);
+  color: var(--color-secondary);
 }
 
 /* TODO: make this responsive mobile-first */

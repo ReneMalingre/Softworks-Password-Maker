@@ -9,8 +9,10 @@
       name="description"
       content="Generates random passwords based on user selections of length and character types."
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css?family=Roboto:400,700"
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto+Slab:wght@300;400;600;800&family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./assets/css/normalize.css" />
@@ -26,7 +28,8 @@
         <div class="card-header">
           <h2>Generate a Password</h2>
         </div>
-        <article class="instructions">
+        <button id="toggle-button" class="btn-toggle">Show Instructions</button>
+        <article class="instructions" id="instructions">
           <h3>
             Click the Generate Password button to generate a random password.
           </h3>
@@ -73,6 +76,9 @@
         </div>
       </section>
     </main>
+    <footer>
+      <p>&copy; 2023 René Malingré - Softworks. All rights reserved.</p>
+    </footer>
     <script src="./assets/js/script.js"></script>
   </body>
 </html>

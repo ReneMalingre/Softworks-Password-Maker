@@ -1,5 +1,5 @@
 // Code to generate a random password based on user-selected criteria
-// The user must select a password length between 8 and 128 characters
+// The user must select a password length between 8 and 128 characters (set in global variables if this needs to change in the future)
 // and select at least one of the following character types:
 // special characters, numbers, lowercase letters, uppercase letters
 // The password is generated randomly from the selected character types
@@ -56,7 +56,6 @@ const passwordMaxLength = 128;
 // Gives an opportunity to add more special characters in the future without having to update the instructions
 addSpecialCharactersToInstructions();
 // ---------------------------------------------------------------------------------------------------
-
 
 // The Main function for getting user input, generating and displaying the password (or errors)
 // ---------------------------------------------------------------------------------------------------
@@ -146,7 +145,7 @@ class PasswordGenerator {
     for (const characterType of this.passwordCharacterOptions) {
       // check that there is enough data to run the methods
       if (!characterType.checkData()) {
-        this.errorCondition = 'There is not enough data to run the program, this is a bug. Please contact the Rene Malingre';
+        this.errorCondition = 'There is not enough data to run the program, this is a bug. Please contact the developer, Rene Malingre';
         return;
       };
 
@@ -167,28 +166,47 @@ class PasswordGenerator {
       this.errorCondition = 'You must select at least one character type in order to generate a password';
       return;
     };
-    this.generatePasswordFromSelectedCharacters();
+
+    // generate the password
+    // set up a flag for the do while loop to check if the password is valid
+    let isValidPassword=true;
+    do {
+      this.generatePasswordFromSelectedCharacters();
+      isValidPassword=true;
+      // ensure that the password contains at least one of the chosen characters of each selected type
+      // as this could occur by chance, invalidating the password
+      for (const characterType of this.passwordCharacterOptions) {
+        if (!characterType.passwordIsValidForThisCharacterType(this.password)) {
+          isValidPassword=false;
+          break;
+        }
+      }
+    } while (!isValidPassword);
   }
 
   // This method checks that the chosen password length is valid
   // it takes a password length as input and returns an error string if an error occurs,
   // or an empty string if the password length is valid
   checkPasswordLength() {
-  // check that the password length is a number
-    if (isNaN(this.passwordLength)) {
+    // check that the password is not empty
+    if (this.passwordLength === '') {
+      return 'You must enter a password length between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
+    }
+    // check that the password length is a number
+    else if (isNaN(this.passwordLength)) {
       return 'The password length must be a number';
     }
     // check that the password length is not null (eg if user clicks cancel)
     else if (this.passwordLength === null) {
-      return 'You must enter a password length';
+      return 'You must enter a password length between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
     }
     // check that the password length is an integer
     else if (this.passwordLength % 1 !== 0) {
-      return 'The password length must be an integer';
+      return 'The password length must be an integer between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
     }
-    // check that the password length is between 8 and 128 characters
+    // check that the password length is between (could vary depending on global variables) 8 and 128 characters
     else if (this.passwordLength < this.passwordMinLength || this.passwordLength > this.passwordMaxLength) {
-      return 'The password length must be between 8 and 128 characters';
+      return 'The password length must be between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
     }
     // if the password length is valid, return true
     else {
@@ -266,6 +284,7 @@ class PasswordGenerator {
 // ---------------------------------------------------------------------------------------------------
 
 // define the CharacterTypes class to hold and select the different types of characters that can be used in a password
+// also checks that the password contains at least one of the selected character type
 // ---------------------------------------------------------------------------------------------------
 // input a string of special characters, a type of character used as a question prompt
 // and a boolean for whether the character type was selected by the user.
@@ -309,6 +328,31 @@ class CharacterTypes {
       this.isSelected=false;
     }
     return;
+  }
+
+  // confirm that the password contains at least one of the selected character type
+  passwordIsValidForThisCharacterType(password) {
+    console.log('password: ' + password);
+    if (this.isSelected) {
+      // password must include at least one of these characters
+      for (const char of this.specialCharacters) {
+        if (password.includes(char)) {
+          return true;
+        }
+      };
+      console.log('<' + password + '> password does not contain any of the ' + this.characterType + ' characters');
+      return false;
+    } else {
+      // password mus not include any of these characters
+      for (const char of this.specialCharacters) {
+        if (password.includes(char)) {
+          // this should never happen with the current code, but is included for completeness/debugging purposes
+          console.log('Bug Alert! <' + password + '> contains <' + char + '> but it should not include any of the ' + this.characterType + ' characters');
+          return false;
+        }
+      };
+      return true;
+    }
   }
 };
 // ---------------------------------------------------------------------------------------------------

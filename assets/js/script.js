@@ -39,6 +39,8 @@ const passwordNumbers = '0123456789';
 const passwordLowercase = 'abcdefghijklmnopqrstuvwxyz';
 const passwordUppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const passwordSpecialCharacters = ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+// The list of special password characters obtained from OWASP Foundation:
+// https://www.owasp.org/index.php/Password_special_characters
 
 // define the min, max and default password lengths
 // define in case these need to be changed in the future.
@@ -48,12 +50,12 @@ const passwordMaxLength = 128;
 
 // ---------------------------------------------------------------------------------------------------
 
-// Add special characters to the instructions on page load
+// Add special characters and min max password lengths to the instructions on page load
 // ---------------------------------------------------------------------------------------------------
 // add the special characters to the instructions here so they are not hard-coded in html
 // otherwise the special characters would need to be escaped in the html
 // and the special characters would not be displayed correctly
-// Gives an opportunity to add more special characters in the future without having to update the instructions
+// Gives an opportunity to add more special characters in the future without having to update the HTML instructions
 addSpecialCharactersToInstructions();
 // ---------------------------------------------------------------------------------------------------
 
@@ -110,6 +112,7 @@ function writePassword() {
 class PasswordGenerator {
   /**
    * Creates a new PasswordGenerator. This class generates a password based on user choices and set rules.
+   * Here are the input parameters:
    * @param {number} pwdDefaultLength - a suggested password length
    * @param {number} pwdMinLength - the minimum password length allowed
    * @param {number} pwdMaxLength - the maximum password length allowed
@@ -120,11 +123,11 @@ class PasswordGenerator {
     this.passwordMinLength = pwdMinLength;
     this.passwordMaxLength = pwdMaxLength;
     this.passwordCharacterOptions=passwordCharacterOptions;
-    this.passwordLength = 0;
-    this.specialCharactersUsed = [];
-    this.errorCondition ='';
-    this.password = '';
-    this.passwordCharacters =[];
+    this.passwordLength = 0; // the user-chosen password length
+    this.specialCharactersUsed = []; // an array to hold the title (eg 'lowercase letters') of the special characters to be used the password
+    this.errorCondition =''; // a string to hold any error messages. If this is empty, there is no error
+    this.password = ''; // the generated password
+    this.passwordCharacters =[]; // an array to hold the actual characters to be used in the password, selected by the user
   }
 
   // The main method to generate the password
@@ -155,7 +158,7 @@ class PasswordGenerator {
       // check if the user selected at least one character type
       if (characterType.isSelected) {
         userSelectedAtLeastOneCharacterType = true;
-        this.passwordCharacters = this.passwordCharacters.concat(characterType.specialCharacters);
+        this.passwordCharacters = this.passwordCharacters.concat(characterType.characterArray);
         // add the character type to the specialCharactersUsed array for user feedback
         this.specialCharactersUsed.push(characterType.characterType);
       };
@@ -168,6 +171,9 @@ class PasswordGenerator {
     };
 
     // generate the password
+    // create new passwords until the password is validly containing at least one character from each character type
+    // This could be done more efficiently, such as  but this is a simple way to ensure that the password is valid
+    // without introducing a level of determinism that can make the password less secure.
     // set up a flag for the do while loop to check if the password is valid
     let isValidPassword=true;
     do {
@@ -182,6 +188,7 @@ class PasswordGenerator {
         }
       }
     } while (!isValidPassword);
+    return;
   }
 
   // This method checks that the chosen password length is valid
@@ -267,9 +274,9 @@ class PasswordGenerator {
         feedback = '<p id="selection-header">This password was created from your selections:</p>';
         feedback += '<ul>';
         for (const charType of this.specialCharactersUsed) {
-          feedback += '<li>include ' + charType + '</li>';
+          feedback += '<li>include ' + charType + ' \u2713</li>';
         }
-        feedback += '<li>a password length of ' + this.passwordLength + ' characters.</li>';
+        feedback += '<li>a password length of ' + this.passwordLength + ' characters. \u2713</li>';
         feedback += '</ul>';
       } else {
         // this should never happen with the current code, but is included for completeness
@@ -281,29 +288,38 @@ class PasswordGenerator {
     };
   };
 };
-// ---------------------------------------------------------------------------------------------------
+// End of PasswordGenerator class --------------------------------------------------------------------
+
 
 // define the CharacterTypes class to hold and select the different types of characters that can be used in a password
-// also checks that the password contains at least one of the selected character type
 // ---------------------------------------------------------------------------------------------------
-// input a string of special characters, a type of character used as a question prompt
-// and a boolean for whether the character type was selected by the user.
-// contains a method to check that there is sufficient data to run the methods,
-// generate the confirm prompt string based on the properties of this class,
-// and ask the user via a confirm popup if they want to include this character type in their password.
 class CharacterTypes {
-  constructor(specialCharacters, characterType, isSelected) {
-    // convert the string to an array of characters for easier manipulation
-    this.specialCharacters = specialCharacters.split('');
+  /**
+   * Creates a new CharacterTypes. This class represents the type of character (eg 'uppercase letters' and the list of character used to seed the password,
+   * and whether the user selected this character type to be included in their password.
+   * It has methods to check that there is sufficient data to run the methods,
+   * generate the confirm prompt string based on the properties of this class,
+   * and ask the user via a confirm popup if they want to include this character type in their password.
+   * It also has a method to check that the password contains at least one of the selected character type.
+   * Here are the input parameters:
+   * @param {string} characters - a string of characters to be potentially included in the password
+   * @param {string} characterType - a description of the character type (eg 'uppercase letters')
+   * @param {boolean} isSelected - user selection result from the confirm popup
+   */
+  constructor(characters, characterType, isSelected) {
+    // convert the input string to an array of characters for easier manipulation
+    this.characterArray = characters.split('');
     this.characterType = characterType;
     this.isSelected = isSelected;
   }
+
   // check that there is enough data to run the methods
+  // this should never be false if the class is used correctly
   checkData() {
-    if (this.specialCharacters === undefined || this.characterType === undefined || this.isSelected === undefined) {
+    if (this.characterArray === undefined || this.characterType === undefined || this.isSelected === undefined) {
       return false;
     } else {
-      if (this.specialCharacters.length===0 || this.characterType.length===0) {
+      if (this.characterArray.length===0 || this.characterType.length===0) {
         return false;
       } else {
         return true;
@@ -335,7 +351,7 @@ class CharacterTypes {
     console.log('password: ' + password);
     if (this.isSelected) {
       // password must include at least one of these characters
-      for (const char of this.specialCharacters) {
+      for (const char of this.characterArray) {
         if (password.includes(char)) {
           return true;
         }
@@ -344,7 +360,7 @@ class CharacterTypes {
       return false;
     } else {
       // password mus not include any of these characters
-      for (const char of this.specialCharacters) {
+      for (const char of this.characterArray) {
         if (password.includes(char)) {
           // this should never happen with the current code, but is included for completeness/debugging purposes
           console.log('Bug Alert! <' + password + '> contains <' + char + '> but it should not include any of the ' + this.characterType + ' characters');
@@ -353,6 +369,44 @@ class CharacterTypes {
       };
       return true;
     }
+  }
+};
+// End of CharacterTypes class ----------------------------------------------------------------------
+
+// UI functions
+// Function to add the special characters to the displayed instructions
+// ---------------------------------------------------------------------------------------------------
+// add the special characters to the displayed instructions for clarity around what the characters actually are
+function addSpecialCharactersToInstructions() {
+  // relies on the global variable passwordSpecialCharacters being available
+  // hard-coded to the particular element id #special-characters
+  const specialCharactersLI = document.querySelector('#special-characters');
+  const specialCharactersText = specialCharactersLI.textContent + ': <' + passwordSpecialCharacters + '>';
+  specialCharactersLI.textContent = specialCharactersText;
+
+  // insert the min and max password length into the instructions
+  const instructionsMessage = document.querySelector('#instructions-min-max');
+  let instructionsMessageText = instructionsMessage.textContent.replace('!!min!!', passwordMinLength);
+  instructionsMessageText = instructionsMessageText.replace('!!max!!', passwordMaxLength);
+  instructionsMessage.textContent = instructionsMessageText;
+
+  return;
+}
+// ---------------------------------------------------------------------------------------------------
+
+// Function to show or hide the user instructions
+// ---------------------------------------------------------------------------------------------------
+function toggleInstructions() {
+  // the initial state of the element is set by inline style only, not by the CSS file
+  // so use getComputedStyle instead of just element.style.display. getComputedStyle factors in the css styling.
+  // Once the script sets the display value, getComputedStyle is no longer necessary, so this method of checking style
+  // is used only to fix the very first click, but it works for subsequent clicks anyway.
+  if (window.getComputedStyle(instructions).display == 'none') {
+    instructions.style.display = 'block';
+    toggleButton.textContent = 'Hide Instructions';
+  } else {
+    instructions.style.display = 'none';
+    toggleButton.textContent = 'Show Instructions';
   }
 };
 // ---------------------------------------------------------------------------------------------------
@@ -374,7 +428,6 @@ function copyPassword() {
     };
   };
 };
-// ---------------------------------------------------------------------------------------------------
 
 // Function to copy a string to the clipboard. Uses modern browser API.
 // ---------------------------------------------------------------------------------------------------
@@ -388,34 +441,5 @@ async function copyToClipboard(myString) {
     console.error('Failed to copy text: ', err);
     return false;
   };
-};
-// ---------------------------------------------------------------------------------------------------
-
-// Function to add the special characters to the displayed instructions
-// ---------------------------------------------------------------------------------------------------
-// add the special characters to the displayed instructions for clarity around what the characters actually are
-function addSpecialCharactersToInstructions() {
-  // relies on the global variable passwordSpecialCharacters being available
-  // hard-coded to the particular element id #special-characters
-  const specialCharactersLI = document.querySelector('#special-characters');
-  const specialCharactersText = specialCharactersLI.textContent + ': <' + passwordSpecialCharacters + '>';
-  specialCharactersLI.textContent = specialCharactersText;
-  return;
-}
-
-// Function to show or hide the instructions
-// ---------------------------------------------------------------------------------------------------
-function toggleInstructions() {
-  // the initial state of the element is set by inline style only, not by the CSS file
-  // so use getComputedStyle instead of just element.style.display. getComputedStyle factors in the css styling.
-  // Once the script sets the display value, getComputedStyle is no longer necessary, so this method of checking style
-  // is used only to fix the very first click, but it works for subsequent clicks anyway.
-  if (window.getComputedStyle(instructions).display == 'none') {
-    instructions.style.display = 'block';
-    toggleButton.textContent = 'Hide Instructions';
-  } else {
-    instructions.style.display = 'none';
-    toggleButton.textContent = 'Show Instructions';
-  }
 };
 // ---------------------------------------------------------------------------------------------------

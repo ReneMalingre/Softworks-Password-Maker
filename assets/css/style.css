@@ -1,31 +1,16 @@
 :root {
-  /* TODO: remove unnecessary variables */
-  /* --body-background-color: #f9fbfd; */
-  --button-color: #423867;
-  --button-color-hover: #6a59a6;
-  /* --button-color-active: hsl(360deg 91% 36%); */
-  --button-color-disabled: hsl(0deg 34% 47%);
-  --button-color-text: hsl(0deg 0% 100%);
-  --button-box-shadow: rgba(0 0 0 / 10%) 0px 1px 6px 0px rgba(0 0 0 / 20%) 0px
-    1px 1px 0px;
+ /* CSS Variables */
   --card-border-radius: 5px;
   --card-box-shadow: rgba(0 0 0 15%) 0px 2px 8px 0px;
   --card-color: hsl(206deg 17% 28%);
   --card-header-after-background-color: #e7e9eb;
   --card-header-after-height: 2px;
   --password-border-color: #c0c7cf;
-  --button-font-size: 1.2rem;
-  --button-padding-tb: 0.6rem;
-  --button-padding-rl: 1.2rem;
-  --toggle-button-font-size: 1rem;
-  --toggle-button-padding-tb: 0.4rem;
-  --toggle-button-padding-rl: 0.8rem;
-  --button-corner-radius: 25px;
   --margin-medium: 0.75rem;
-  --margin-large: 1.5rem;
-  --font-size-smallish: 0.9rem;
   --font-size-small: 0.7rem;
+  --font-size-smallish: 0.9rem;
   --font-size-normal: 1rem;
+  --font-size-largeish: 1.2rem;
   --font-size-large: 1.4rem;
   --error-text-color: #b6382f;
   --color-main: #4a4e4d;
@@ -34,9 +19,55 @@
   --color-accent-2: #65818a;
   --color-accent-3: #eefbff;
   --text-color: #333;
-  --password-font-family: "Roboto Mono", monospace, courier;
+  --font-family: 'Roboto', 'Open Sans', 'Montserrat', sans-serif;
+  --password-font-family: 'Roboto Mono', monospace, courier;
+
+  /* transitions */
+  --transition-default: all 0.5s ease-in-out;
+
+  /* buttons */
+  --button-color: #423867;
+  --button-color-hover: #6a59a6;
+  --button-color-text: white;
+  --button-corner-radius: 25px;
+  --button-color-disabled: hsl(0deg 34% 47%);
+  --button-box-shadow: rgba(0 0 0 / 10%) 0px 1px 6px 0px rgba(0 0 0 / 20%) 0px
+    1px 1px 0px;
+
+  /* primary buttons */
+  --button-font-size: 1rem;
+  --button-padding: 0.5rem 1rem;
+  --button-margin: 0.5rem 0;
+
+  /* primary buttons large screens */
+  --button-font-size-large: 1.2rem;
+  --button-padding-large: 0.6rem 1.2rem;
+
+  /* secondary buttons */
+  --small-button-color: #423867;
+  --small-button-color-hover: #6a59a6;
+  --small-button-color-text: hsl(0deg 0% 100%);
+  --small-button-font-size: 0.8rem;
+  --small-button-padding: 0.4rem 0.6rem;
+  --small-button-margin: 0.4rem 0;
+
+  /* secondary buttons large screens */
+  --small-button-font-size-large: 1rem;
+  --small-button-padding-large: 0.4rem 0.6rem;
+
+  /* page title */
+  --h1-font-size: 1.5rem;
+  --h1-font-size-large: 2rem;
+
+  /* instruction title */
+  --h3-font-size: 0.8rem;
+  --h3-font-size-large: 1rem;
+
+  /* set standard font size */
+  font-size: 16px;
 }
 
+/* reset, together with the normalize.css */
 *,
 *::before,
 *::after {
@@ -45,39 +76,31 @@
   padding: 0;
 }
 
-html,
-body,
-.wrapper {
-  font-family: Roboto, "Open Sans", Montserrat, sans-serif;
-  font-size: 16px;
-  margin: 0;
-  padding: 0;
+/* set font family and background color */
+body {
+  font-family: var(--font-family);
   background-color: var(--color-main);
 }
 
-body {
-  font-family: sans-serif;
-  background-color: var(--body-background-color);
-}
-
+/* wrapper contains all the UI elements */
 .wrapper {
   padding-top: var(--margin-medium);
-  padding-left: var(--margin-medium);
-  padding-right: var(--margin-medium);
+  margin: 0 0.2rem;
 }
 
 header {
   text-align: center;
-  padding: var(--margin-medium) 0;
-  padding-top: 0;
   background-color: var(--color-main);
 }
 
 h1 {
   color: var(--color-secondary);
   margin: 0.67em 0 0;
+  font-size: var(--h1-font-size);
+  transition: var(--transition-default);
 }
 
+/* main UI area */
 .card {
   background-color: var(--color-accent-3);
   border-radius: var(--card-border-radius);
@@ -87,7 +110,7 @@ h1 {
   font-size: 18px;
   margin: 0 auto;
   max-width: 800px;
-  padding: 30px 40px;
+  padding: 5px;
 }
 
 .card-header h2 {
@@ -97,35 +120,41 @@ h1 {
   color: var(--color-accent-1);
 }
 
-
+/* instructions for the user */
 #instructions {
   display: none;
-  transition: all 0.5s ease-in-out;
+  margin-bottom: 0.5rem;
 }
 
-
 .instructions h3 {
-  font-size: var(--font-size-normal);
+  font-size: var(--h3-font-size);
   font-weight: bold;
-  margin: 0.5em 0;
+  margin: 0.25em 0;
   color: var(--color-accent-2);
+  transition: var(--transition-default);
+}
+
+/* give a little space above and below the list */
+ul {
+  margin: 0.25em 0;
 }
 
 .instructions p,
 .instructions li,
 .feedback p,
 .feedback li {
-  font-size: var(--font-size-smallish);
-  line-height: 1.4;
+  font-size: var(--font-size-small) !important;
+  line-height: 1.3em;
   color: (var(--text-color));
 }
 
 .instructions li,
 .feedback li {
-  margin-left: 3em;
+  margin-left: 2em;
   color: (var(--text-color));
 }
 
+/* displays via JS the error message */
 .error-message {
   color: var(--error-text-color) !important;
   font-size: var(--font-size-normal) !important;
@@ -153,7 +182,9 @@ h1 {
 .post-generate {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  margin-left: 0.25rem;
   align-content: flex-start;
   align-items: flex-start;
 }
@@ -176,43 +207,35 @@ h1 {
   clear: both;
 }
 
-.btn, .btn-toggle {
-  border: none;
+/* set up the two button styles */
+.btn-primary {
   background-color: var(--button-color);
+  color: var(--button-color-text);
   border-radius: var(--button-corner-radius);
   box-shadow: var(--button-box-shadow);
-  color: var(--button-color-text);
-  display: inline-block;
   font-size: var(--button-font-size);
-  line-height: var(--button-font-size);
-  margin: 16px 16px 16px 20px;
-  padding: var(--button-padding-tb) var(--button-padding-rl);
+  padding: var(--button-padding);
+  margin: var(--button-margin);
   text-align: center;
   cursor: pointer;
+  transition: var(--transition-default);
+  border: none;
 }
 
-.btn-toggle{
-  font-size: var(--toggle-button-font-size);
-  padding: var(--toggle-button-padding-tb) var(--toggle-button-padding-rl);
-  transition: all 0.3s ease-in-out;
-  margin:0;
-  margin-top: var(--toggle-button-padding-tb );
+.btn-secondary {
   font-style: italic;
   font-weight: 300;
-}
-
-.btn-copy {
+  font-size: var(--small-button-font-size);
+  padding: var(--small-button-padding);
+  margin: var(--button-margin);
   align-self: flex-start;
   border: none;
+  color: var(--button-color-text);
   background-color: var(--button-color);
   border-radius: var(--button-corner-radius);
   box-shadow: var(--button-box-shadow);
-  color: var(--button-color-text);
-  font-size: var(--button-font-size);
-  line-height: var(--button-font-size);
-  margin: var(--margin-medium);
-  padding: var(--button-padding-tb) var(--button-padding-rl);
-  cursor: pointer;
+  display: block;
+  transition: var(--transition-default);
 }
 
 button:hover,
@@ -226,20 +249,20 @@ button[disabled] {
   background: var(--button-color-disabled);
 }
 
+/* the textarea where the password is displayed */
 #password {
   appearance: none;
   display: block;
   width: 100%;
   font-family: var(--password-font-family);
-  font-size: 1.2rem;
-  padding: 1em 1em 3em;
+  font-size: var(--font-size-smallish);
+  padding: 0.5em 0.5em 5em;
   text-align: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
   border: 2px dashed var(--password-border-color);
   border-radius: 6px;
   resize: none;
   overflow: hidden;
+  transition: var(--transition-default);
 }
 
 #password:focus {
@@ -251,6 +274,7 @@ button[disabled] {
   color: var(--color-accent-3);
 }
 
+/* the user selections, populated by JS */
 #feedback {
   text-align: left;
   margin-top: 10px;
@@ -267,53 +291,73 @@ footer {
   padding-bottom: 0;
   background-color: var(--color-main);
   color: var(--color-secondary);
+  font-size: var(--font-size-normal);
 }
 
-/* TODO: make this responsive mobile-first */
-@media (max-width: 690px) {
+/* medium screens */
+@media screen and (min-width: 501px) {
   .card {
     padding: 15px 10px;
-  }
-
-  .btn,
-  .btn-copy {
-    font-size: 1rem;
-    margin: 16px 0 0;
-    padding: 10px 15px;
   }
 
   #password {
     font-size: var(--font-size-normal);
     margin: 0;
-    padding: 1em 1em 5em;
+    padding: 1em 1em 4em;
   }
 
   .instructions li,
-  .feedback li {
-    font-size: var(--font-size-smallish);
+  .feedback li .instructions p,
+  .feedback p {
+    font-size: var(--font-size-smallish) !important;
   }
 }
 
-@media (max-width: 500px) {
-  .card {
-    padding: 5px;
+/* large screens */
+@media screen and (min-width: 691px) {
+  h1 {
+    font-size: var(--h1-font-size-large);
   }
 
-  .btn,
-  .btn-copy {
-    font-size: 0.8rem;
+  .card {
+    padding: 15px 30px;
+  }
+
+  /* show instructions and copy buttons */
+  .btn-secondary {
+    font-size: var(--small-button-font-size-large);
+    padding: var(--small-button-padding-large);
+  }
+
+  .btn-primary {
+    font-size: var(--button-font-size-large);
+    padding: var(--button-padding-large);
   }
 
   #password {
-    font-size: var(--font-size-smallish);
-    margin: 0;
-    padding: 0.5em 0.5em 5em;
+    font-size: var(--font-size-large);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 1em 1em 3em;
+    padding: 0.5em 0.5em 4em;
+  }
+
+  .instructions h3 {
+    font-size: var(--h3-font-size-large);
   }
 
   .instructions p,
   .instructions li,
   .feedback p,
   .feedback li {
-    font-size: var(--font-size-small);
+    font-size: var(--font-size-smallish) !important;
+  }
+
+  .post-generate {
+    margin-right: 3rem;
+  }
+
+  footer {
+    font-size: var(--font-size-largeish);
   }
 }

@@ -24,18 +24,24 @@
     <header>
       <h1>Softworks Password Maker</h1>
     </header>
+
+    <!-- main content -->
     <main class="wrapper">
+      <!-- card to contain the password generator UI -->
       <section class="card">
         <div class="card-header">
           <h2>Generate a Password</h2>
         </div>
+
         <!-- button to show or hide the user instructions -->
-        <button id="toggle-button" class="btn-toggle">Show Instructions</button>
+        <button id="toggle-button" class="btn-secondary">Show Instructions</button>
+
         <!-- user instructions -->
         <article class="instructions" id="instructions">
           <h3>
             Click the Generate Password button to generate a random password.
           </h3>
+
           <!-- replace the min and max with the defined password min and max via javascript -->
           <p id="instructions-min-max">You must select a password length between !!min!! and !!max!! characters.</p>
           <p>You must select at least one of the following character types:</p>
@@ -62,8 +68,8 @@
             button again.
           </p>
         </article>
+
         <!-- page area to show the results and further options-->
-        
         <div class="card-body">
           <!-- text area to show the generated password -->
           <textarea
@@ -73,23 +79,31 @@
             aria-label="Generated Password"
           >
           </textarea>
-          <!-- button to copy the password to the clipboard, and an empty div to populate with info
-          about the selection made or an error that has ocurred -->
+          
+          <!-- button to copy the password to the clipboard -->
           <div class="post-generate">
-            <button id="copy-button" class="btn-copy">Copy Password</button>
+            <button id="copy-button" class="btn-secondary">Copy Password</button>
+
+            <!-- empty div to target with JS showing user options or errors -->
             <div class="feedback" id="#feedback"></div>
           </div>
         </div>
-        <!-- button to run the code to ask for user options and then to generate a new random password -->
+
+        <!-- button to run the application code to ask for user options and then to generate a new random password -->
         <div class="card-footer">
-          <button id="generate" class="btn">Generate Password</button>
+          <button id="generate" class="btn-primary">Generate Password</button>
         </div>
       </section>
+
     </main>
+
     <!-- footer -->
     <footer>
       <p>&copy; 2023 René Malingré - Softworks. All rights reserved.</p>
     </footer>
+
+    <!-- link to the javascript file -->
     <script src="./assets/js/script.js"></script>
+    
   </body>
 </html>

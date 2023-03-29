@@ -33,8 +33,6 @@ toggleButton.addEventListener('click', toggleInstructions);
 // Define global variables
 // ---------------------------------------------------------------------------------------------------
 // the possible password characters are stored in string constants, in 4 different categories
-// it pains me philosophically to declare these as global variables, but I need the special characters here
-// for addSpecialCharactersToInstructions()
 const passwordNumbers = '0123456789';
 const passwordLowercase = 'abcdefghijklmnopqrstuvwxyz';
 const passwordUppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -47,7 +45,6 @@ const passwordSpecialCharacters = ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
 const passwordDefaultLength = 12;
 const passwordMinLength = 8;
 const passwordMaxLength = 128;
-
 // ---------------------------------------------------------------------------------------------------
 
 // Add special characters and min max password lengths to the instructions on page load
@@ -197,25 +194,25 @@ class PasswordGenerator {
   checkPasswordLength() {
     // check that the password is not empty
     if (this.passwordLength === '') {
-      return 'You must enter a password length between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
+      return 'Empty response. You must enter a password length between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
     }
     // check that the password length is a number
     else if (isNaN(this.passwordLength)) {
-      return 'The password length must be a number';
+      return 'Not a number. The password length must be a number';
     }
-    // check that the password length is not null (eg if user clicks cancel)
+    // check that the password length is not null
     else if (this.passwordLength === null) {
-      return 'You must enter a password length between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
+      return 'No response. You must enter a password length between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
     }
     // check that the password length is an integer
     else if (this.passwordLength % 1 !== 0) {
-      return 'The password length must be an integer between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
+      return 'Not an integer. The password length must be an integer between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
     }
     // check that the password length is between (could vary depending on global variables) 8 and 128 characters
     else if (this.passwordLength < this.passwordMinLength || this.passwordLength > this.passwordMaxLength) {
-      return 'The password length must be between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
+      return 'Outside range. The password length must be between '+ passwordMinLength + ' and ' + passwordMaxLength + ' characters';
     }
-    // if the password length is valid, return true
+    // if the password length is valid, return an empty string (which indicates no error)
     else {
       return '';
     }

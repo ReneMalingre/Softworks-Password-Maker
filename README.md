@@ -60,11 +60,19 @@ Clone the repository to your local machine, or go to the [live site](#live-url-a
 
 ## Screenshots
 
+### Desktop Browser
+
 ![Screenshot of the application on a desktop browser](./docs/screenshot-desktop.png)
+
+### Mobile Browser
 
 ![Screenshot of the application on a mobile screen](./docs/screenshot-mobile.png)
 
+### Application Screenshot with instructions and a result
+
 ![Screenshot of the application with instructions and a result](./docs/screenshot-desktop-instructions-result.png)
+
+### Application Screenshot with an error message
 
 ![Screenshot of the application with an error message](./docs/screenshot-desktop-error.png)
 

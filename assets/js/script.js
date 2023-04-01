@@ -6,7 +6,6 @@
 // and displayed to the user, or if there is an error, an error message is displayed to the user
 
 // Globals
-
 // Select elements and add event listeners for user interaction
 // ---------------------------------------------------------------------------------------------------
 // select the generate button
@@ -59,8 +58,9 @@ addSpecialCharactersToInstructions();
 // The Main function for getting user input, generating and displaying the password (or errors)
 // ---------------------------------------------------------------------------------------------------
 function writePassword() {
-  // clear the UI. This doesn't actually update the screen until after the routine has finished
-  // but still worth doing.
+  // get the element selectors and clear the UI. 
+  // This doesn't actually update the screen until
+  // after the routine has finished but it's still worth doing.
   const passwordText = document.querySelector('#password');
   const feedbackText = document.getElementById('#feedback');
   generateBtn.disabled=true;
@@ -95,7 +95,7 @@ function writePassword() {
     copyPasswordBtn.style.display = 'block';
   };
 
-  // display the user feedback: error or list the selections for the user to review
+  // display the user feedback: error or list the selections on the page for the user to review
   feedbackText.innerHTML= passwordMaker.userFeedbackHTML();
 
   // enable the generate button again
@@ -131,11 +131,9 @@ class PasswordGenerator {
   generatePassword() {
     // prompt the user to enter a password length and check for validity
     this.promptUserForPasswordLength();
-    console.log('user selected a password length of ' + this.passwordLength );
 
     // bail out if the user did not enter a valid password length
     if (this.errorCondition.length > 0) {
-      console.log('error getting password length: ' + this.errorCondition);
       return;
     };
 
@@ -152,7 +150,7 @@ class PasswordGenerator {
       // use the method in the CharacterTypes class to ask the user if they want to include this character type
       characterType.askUser();
 
-      // check if the user selected at least one character type
+      // check if the user has selected at least one character type
       if (characterType.isSelected) {
         userSelectedAtLeastOneCharacterType = true;
         this.passwordCharacters = this.passwordCharacters.concat(characterType.characterArray);
@@ -167,9 +165,10 @@ class PasswordGenerator {
       return;
     };
 
-    // generate the password
+    // now generate the password as the user has entered a valid password length and selected at least one character type
     // create new passwords until the password is validly containing at least one character from each character type
-    // This could be done more efficiently, such as  but this is a simple way to ensure that the password is valid
+    // This could be done more efficiently, such as assigning one of password characters when the user selects the type,
+    // but this is a simple way to ensure that the password is valid
     // without introducing a level of determinism that can make the password less secure.
     // set up a flag for the do while loop to check if the password is valid
     let isValidPassword=true;
@@ -184,12 +183,22 @@ class PasswordGenerator {
           break;
         }
       }
+      // loop until a valid password is generated
     } while (!isValidPassword);
     return;
   }
 
+  // This method asks the user for password length, then check that the password length is valid.
+  // stores the password length in the passwordLength property
+  // stores the error condition in the errorCondition property
+  // or if no error, the errorCondition property will be an empty string
+  promptUserForPasswordLength() {
+    this.passwordLength = prompt('Please select a password length between ' + this.passwordMinLength + ' and ' + this.passwordMaxLength + ' characters', this.passwordDefaultLength);
+    this.errorCondition = this.checkPasswordLength();
+  }
+
   // This method checks that the chosen password length is valid
-  // it takes a password length as input and returns an error string if an error occurs,
+  // it takes the internally-stored password length user entry value as input and returns an error string if an error occurs,
   // or an empty string if the password length is valid
   checkPasswordLength() {
     // check that the password is not empty
@@ -216,15 +225,6 @@ class PasswordGenerator {
     else {
       return '';
     }
-  }
-
-  // This method asks the user for password length, then check that the password length is valid.
-  // stores the password length in the passwordLength property
-  // stores the error condition in the errorCondition property
-  // or if no error, the errorCondition property will be an empty string
-  promptUserForPasswordLength() {
-    this.passwordLength = prompt('Please select a password length between ' + this.passwordMinLength + ' and ' + this.passwordMaxLength + ' characters', this.passwordDefaultLength);
-    this.errorCondition = this.checkPasswordLength();
   }
 
   // This method creates the password based on the user's selections and the input parameters of possible characters
@@ -255,7 +255,7 @@ class PasswordGenerator {
   getRandomCharacter() {
     // get a random index from the characters array
     const randomIndex = Math.floor(Math.random() * this.passwordCharacters.length);
-    // return the character at the random index
+    // return the character at the random index from the possible characters array
     return this.passwordCharacters[randomIndex];
   };
 
@@ -323,10 +323,12 @@ class CharacterTypes {
       }
     }
   }
+
   // generate the confirm prompt string based on the properties of this class
   constructConfirmPrompt() {
     return 'Do you want to include ' + this.characterType + ' in your password?';
   }
+
   // ask the user if they want to include this character type in their password
   askUser() {
     // ask the user if they want to include this character type in their password
@@ -345,7 +347,6 @@ class CharacterTypes {
 
   // confirm that the password contains at least one of the selected character type
   passwordIsValidForThisCharacterType(password) {
-    console.log('password: ' + password);
     if (this.isSelected) {
       // password must include at least one of these characters
       for (const char of this.characterArray) {
@@ -353,14 +354,12 @@ class CharacterTypes {
           return true;
         }
       };
-      console.log('<' + password + '> password does not contain any of the ' + this.characterType + ' characters');
       return false;
     } else {
-      // password mus not include any of these characters
+      // password must not include any of these characters
       for (const char of this.characterArray) {
         if (password.includes(char)) {
           // this should never happen with the current code, but is included for completeness/debugging purposes
-          console.log('Bug Alert! <' + password + '> contains <' + char + '> but it should not include any of the ' + this.characterType + ' characters');
           return false;
         }
       };
@@ -432,10 +431,8 @@ async function copyToClipboard(myString) {
   try {
     // fancy! asynchronous clipboard API
     await navigator.clipboard.writeText(myString);
-    console.log('Text copied to clipboard');
     return true;
   } catch (err) {
-    console.error('Failed to copy text: ', err);
     return false;
   };
 };
